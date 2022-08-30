@@ -13,8 +13,8 @@ class LexToken
   def sort_token(character)
     @type = if character.match(Patterns::DIGIT[:REGEXP])
               Patterns::DIGIT[:TYPE]
-            elsif character.match(Patterns::WORD[:REGEXP])
-              Patterns::WORD[:TYPE]
+            elsif character.match(Patterns::LETTER[:REGEXP])
+              Patterns::LETTER[:TYPE]
             elsif character.match(Patterns::OPERATOR[:REGEXP])
               Patterns::OPERATOR[:TYPE]
             elsif character.match(Patterns::BRACES[:REGEXP])

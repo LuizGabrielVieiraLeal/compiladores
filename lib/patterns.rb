@@ -8,4 +8,5 @@ module Patterns
   PARENTHESES = { TYPE: 'parentheses', REGEXP: /[()]/ }
   PUNCT = { TYPE: 'punct', REGEXP: /[[:punct:]]/ }
   QUOTE = { TYPE: 'quote', REGEXP: /["']/ }
+  SPACE = { TYPE: 'space', REGEXP: /[[:space:]]+/ }
 end

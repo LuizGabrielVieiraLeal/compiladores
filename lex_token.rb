@@ -1,34 +1,31 @@
 require './lib/patterns'
 
 class LexToken
-  attr_reader :value, :type
+  attr_reader :text, :tokens
 
-  def initialize(character)
-    @value = character
-    @type = sort_token(character)
+  def initialize(filename)
+    @text = format_text filename
+    @tokens = []
+    sort_tokens
   end
 
   private
 
-  def sort_token(character)
-    @type = if character.match(Patterns::DIGIT[:REGEXP])
-              Patterns::DIGIT[:TYPE]
-            elsif character.match(Patterns::LETTER[:REGEXP])
-              Patterns::LETTER[:TYPE]
-            elsif character.match(Patterns::OPERATOR[:REGEXP])
-              Patterns::OPERATOR[:TYPE]
-            elsif character.match(Patterns::BRACES[:REGEXP])
-              Patterns::BRACES[:TYPE]
-            elsif character.match(Patterns::BRACKETS[:REGEXP])
-              Patterns::BRACKETS[:TYPE]
-            elsif character.match(Patterns::PARENTHESES[:REGEXP])
-              Patterns::PARENTHESES[:TYPE]
-            elsif character.match(Patterns::QUOTE[:REGEXP])
-              Patterns::QUOTE[:TYPE]
-            elsif character.match(Patterns::PUNCT[:REGEXP])
-              Patterns::PUNCT[:TYPE]
-            elsif character.match(Patterns::OTHER[:REGEXP])
-              Patterns::OTHER[:TYPE]
-            end
+  def format_text filename
+    lines = []
+    File.foreach(filename) do |line|
+      line = line.strip!
+      lines.push(line) unless line.match(Patterns::COMMENT_LINE[:REGEXP])
+    end
+    lines.join(' ').gsub(Patterns::COMMENT_BLOCK[:REGEXP], '')
+  end
+
+  def sort_tokens
+    @text.each_char.with_index do |char, index|
+      if char.match(Patterns::IDENTIFIER[:REGEXP])
+        puts char
+        puts index
+      end
+    end
   end
 end

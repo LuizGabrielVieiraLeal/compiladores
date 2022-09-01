@@ -1,22 +1,9 @@
--- fdjifjifdji
 class Main inherits IO {
-    (*
-        kkrkorkweorkwpo
-        f,dofdkofd
-        fdkofk
-    *)
-    (*
-        aaaaaaaaaaaaaaa
-    *)
     main(): Object {
         let hello: String <- "Hello, ",
             name: String <- "",
             ending: String <- "!\n"
         in {
-
-            (*
-                bbbbbbbbbbbbbbbbbbbbbbb
-            *)
             out_string("Please enter your name:\n");
             name <- in_string();
             out_string(hello.concat(name.concat(ending)));

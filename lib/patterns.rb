@@ -8,6 +8,7 @@ module Patterns
   STRING = { TYPE: 'string'.upcase, REGEXP: /".*?"/ }.freeze
   INT = { TYPE: 'int'.upcase, REGEXP: /\d+/ }.freeze
   BOOL = { TYPE: 'boolean'.upcase, KEYS: %w[false true] }.freeze
+  OPERATORS = { TYPE: 'operator'.upcase, REGEXP: /[\+\-\*\/~><=]/ }.freeze
   OPEN_EXP = { TYPE: 'open_exp'.upcase, REGEXP: /\(/ }.freeze
   CLOSE_EXP = { TYPE: 'close_exp'.upcase, REGEXP: /\)/ }.freeze
   OPEN_SCOPE = { TYPE: 'open_scope'.upcase, REGEXP: /\{/ }.freeze

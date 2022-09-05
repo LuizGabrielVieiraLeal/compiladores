@@ -10,3 +10,13 @@ class  Main  inherits  IO {
 self
 true
 false
+<-
++
+-
+<=
+*
+/
+~
+<
+>
+=

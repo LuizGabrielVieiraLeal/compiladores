@@ -40,17 +40,17 @@ class Lex
         index += 1
       end
 
-      if @text[index] =~ /[\+\-\*\/~><=]/ && (@text[index] =~ />(?!=)/ || @text[index] =~ /<(?!=)/ || @text[index] =~ /<(?!-)/)
+      if @text[index] =~ Patterns::OPERATORS[:REGEXP] && (@text[index] =~ />(?!=)/ || @text[index] =~ /<(?!=)/ || @text[index] =~ /<(?!-)/)
         @tokens.push(Token.new("#{@text[index]}#{@text[index + 1]}", Patterns::OPERATORS[:TYPE]))
         index += 2
-      elsif @text[index] =~ /[\+\-\*\/~><=]/
-        @tokens.push(Token.new(@text[index], Patterns::OPERATORS[:TYPE])) if @text[index] =~ Patterns::OPERATORS[:REGEXP]
+      elsif @text[index] =~ Patterns::OPERATORS[:REGEXP]
+        @tokens.push(Token.new(@text[index], Patterns::OPERATORS[:TYPE]))
         index += 1
       end
 
       case @text[index]
       when /[_[A-Za-z]]/
-        while @text[index] =~ Patterns::OBJECT_ID[:REGEXP]
+        while @text[index] =~ /[_[A-Za-z]]/
           str << @text[index]
           index += 1
         end

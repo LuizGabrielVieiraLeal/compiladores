@@ -1,6 +1,6 @@
 class  Main  inherits  IO {
     --fdikjfd
-    main() : Object {
+    Main() : Object {
         (*
             jijgfijgfi
         *)

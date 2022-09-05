@@ -12,9 +12,8 @@ class Lex
   end
 
   def next_token
-    current_index = @tk_index
     @tk_index += 1
-    @tokens[current_index]
+    @tokens[@tk_index - 1]
   end
 
   private
@@ -33,6 +32,14 @@ class Lex
     while index < @text.length
       str = ''
 
+      if @text[index] =~ /[\(\)\{\}]/
+        @tokens.push(Token.new(@text[index], Patterns::OPEN_EXP[:TYPE])) if @text[index] =~ Patterns::OPEN_EXP[:REGEXP]
+        @tokens.push(Token.new(@text[index], Patterns::CLOSE_EXP[:TYPE])) if @text[index] =~ Patterns::CLOSE_EXP[:REGEXP]
+        @tokens.push(Token.new(@text[index], Patterns::OPEN_SCOPE[:TYPE])) if @text[index] =~ Patterns::OPEN_SCOPE[:REGEXP]
+        @tokens.push(Token.new(@text[index], Patterns::CLOSE_SCOPE[:TYPE])) if @text[index] =~ Patterns::CLOSE_SCOPE[:REGEXP]
+        index += 1
+      end
+
       case @text[index]
       when /[_[A-Za-z]]/
         while @text[index] =~ Patterns::OBJECT_ID[:REGEXP]
@@ -42,8 +49,10 @@ class Lex
 
         if Patterns::KEYWORDS[:KEYS].include?(str.downcase)
           @tokens.push(Token.new(str, Patterns::KEYWORDS[:TYPE]))
-        elsif Patterns::REFERENCE[:KEYS].include?(str)
-          @tokens.push(Token.new(str, Patterns::REFERENCE[:TYPE]))
+        elsif Patterns::BOOL[:KEYS].include?(str.downcase)
+          @tokens.push(Token.new(str, Patterns::BOOL[:TYPE]))
+        elsif Patterns::SELF_REFERENCE[:KEYS].include?(str)
+          @tokens.push(Token.new(str, Patterns::SELF_REFERENCE[:TYPE]))
         elsif str =~ Patterns::TYPE_ID[:REGEXP]
           @tokens.push(Token.new(str, Patterns::TYPE_ID[:TYPE]))
         elsif str =~ Patterns::OBJECT_ID[:REGEXP]
@@ -73,8 +82,6 @@ class Lex
           index += 1
         end
         @tokens.push(Token.new(str, Patterns::INT[:TYPE])) if str =~ Patterns::INT[:REGEXP]
-      when /\s/
-        @tokens.push(Token.new(str, Patterns::WHITE_SPACE[:TYPE])) if str =~ Patterns::WHITE_SPACE[:REGEXP]
       end
       index += 1
     end

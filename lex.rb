@@ -2,13 +2,22 @@ require './lib/patterns'
 require './token'
 
 class Lex
-  attr_reader :text, :tokens
+  attr_reader :tokens
 
   def initialize(filename)
-    @text = format_text filename
     @tokens = []
     @tk_index = 0
-    sort_tokens
+    @lines = []
+    @removing_block = false
+
+    File.foreach(filename) do |line|
+      line_text = line.strip!
+      @lines.push(line_text)
+    end
+
+    @lines.each_with_index do |text, index|
+      sort_tokens(text, index + 1)
+    end
   end
 
   def next_token
@@ -18,24 +27,15 @@ class Lex
 
   private
 
-  def format_text filename
-    lines = []
-    File.foreach(filename) do |line|
-      line = line.strip!
-      lines.push(line) unless line.match(Patterns::COMMENT_LINE)
-    end
-    lines.join(' ').gsub(Patterns::COMMENT_BLOCK, '')
-  end
-
-  def sort_tokens
+  def sort_tokens(text, line_index)
     index = 0
-    while index < @text.length
+    while index < text.length
       str = ''
 
-      case @text[index]
+      case text[index]
       when /[_[A-Za-z]]/
-        while @text[index] =~ /[_[A-Za-z]]/
-          str << @text[index]
+        while text[index] =~ /[_[A-Za-z]]/
+          str << text[index]
           index += 1
         end
 
@@ -52,8 +52,8 @@ class Lex
         end
       when /'/
         index += 1
-        while @text[index] !~ /'/
-          str << @text[index]
+        while text[index] !~ /'/
+          str << text[index]
           index += 1
         end
         str.prepend("'", '')
@@ -61,39 +61,41 @@ class Lex
         @tokens.push(Token.new(str, Patterns::CHAR[:TYPE])) if str =~ Patterns::CHAR[:REGEXP]
       when /"/
         index += 1
-        while @text[index] !~ /"/
-          str << @text[index]
+        while text[index] !~ /"/
+          str << text[index]
           index += 1
         end
         str.prepend('"', '')
         str.concat('"', '')
         @tokens.push(Token.new(str, Patterns::STRING[:TYPE])) if str =~ Patterns::STRING[:REGEXP]
       when /\d/
-        while @text[index] =~ /\d/
-          str << @text[index]
+        while text[index] =~ /\d/
+          str << text[index]
           index += 1
         end
         @tokens.push(Token.new(str, Patterns::INT[:TYPE])) if str =~ Patterns::INT[:REGEXP]
       when Patterns::PUNCT[:REGEXP]
-        @tokens.push(Token.new(@text[index], Patterns::PUNCT[:TYPE]))
+        @tokens.push(Token.new(text[index], Patterns::PUNCT[:TYPE]))
       when /[\(\)\{\}]/
-        @tokens.push(Token.new(@text[index], Patterns::OPEN_EXP[:TYPE])) if @text[index] =~ Patterns::OPEN_EXP[:REGEXP]
-        @tokens.push(Token.new(@text[index], Patterns::CLOSE_EXP[:TYPE])) if @text[index] =~ Patterns::CLOSE_EXP[:REGEXP]
-        @tokens.push(Token.new(@text[index], Patterns::OPEN_SCOPE[:TYPE])) if @text[index] =~ Patterns::OPEN_SCOPE[:REGEXP]
-        @tokens.push(Token.new(@text[index], Patterns::CLOSE_SCOPE[:TYPE])) if @text[index] =~ Patterns::CLOSE_SCOPE[:REGEXP]
+        @tokens.push(Token.new(text[index], Patterns::OPEN_EXP[:TYPE])) if text[index] =~ Patterns::OPEN_EXP[:REGEXP]
+        @tokens.push(Token.new(text[index], Patterns::CLOSE_EXP[:TYPE])) if text[index] =~ Patterns::CLOSE_EXP[:REGEXP]
+        @tokens.push(Token.new(text[index], Patterns::OPEN_SCOPE[:TYPE])) if text[index] =~ Patterns::OPEN_SCOPE[:REGEXP]
+        @tokens.push(Token.new(text[index], Patterns::CLOSE_SCOPE[:TYPE])) if text[index] =~ Patterns::CLOSE_SCOPE[:REGEXP]
       when /<(?!-)/
-        @tokens.push(Token.new("#{@text[index]}#{@text[index + 1]}", Patterns::OPERATORS[:TYPE]))
+        @tokens.push(Token.new("#{text[index]}#{text[index + 1]}", Patterns::OPERATORS[:TYPE]))
         index += 1
       when /<(?!=)/
-        @tokens.push(Token.new("#{@text[index]}#{@text[index + 1]}", Patterns::OPERATORS[:TYPE]))
+        @tokens.push(Token.new("#{text[index]}#{text[index + 1]}", Patterns::OPERATORS[:TYPE]))
         index += 1
       when />(?!=)/
-        @tokens.push(Token.new("#{@text[index]}#{@text[index + 1]}", Patterns::OPERATORS[:TYPE]))
+        @tokens.push(Token.new("#{text[index]}#{text[index + 1]}", Patterns::OPERATORS[:TYPE]))
         index += 1
+      when /-(?!-)/
+        index = text.length
       when Patterns::OPERATORS[:REGEXP]
-        @tokens.push(Token.new(@text[index], Patterns::OPERATORS[:TYPE]))
+        @tokens.push(Token.new(text[index], Patterns::OPERATORS[:TYPE]))
       else
-        @tokens.push(Token.new(@text[index], 'UNDEFINED')) if @text[index] !~ /\s/
+        @tokens.push(Token.new(text[index], 'UNDEFINED', "Unexpected token at #{line_index}:#{index + 1}")) if text[index] !~ /\s/
       end
 
       index += 1

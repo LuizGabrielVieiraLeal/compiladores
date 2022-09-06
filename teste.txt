@@ -1,5 +1,5 @@
-class  Main  inherits  IO {
+class  Main  inherits  IO { -- hudshdushdushdush
     main () : Object {
         out_string("Hello, --.\n")
     };
-};>==ç
+};ç

@@ -13,6 +13,7 @@ module Patterns
   CLOSE_EXP = { TYPE: 'close_exp'.upcase, REGEXP: /\)/ }.freeze
   OPEN_SCOPE = { TYPE: 'open_scope'.upcase, REGEXP: /\{/ }.freeze
   CLOSE_SCOPE = { TYPE: 'close_scope'.upcase, REGEXP: /}/ }.freeze
+  PUNCT = { TYPE: 'punct'.upcase, REGEXP: /[.,;:]/ }.freeze
 
   # Utils
   COMMENT_LINE = /\A--/.freeze

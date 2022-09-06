@@ -1,22 +1,9 @@
 class  Main  inherits  IO {
     --fdikjfd
-    Main() : Object {
+    main() : Object {
         (*
             jijgfijgfi
         *)
         out_string("Hello, --.\n")
     };
-};
-self
-true
-false
-<-
-+
--
-<=
-*
-/
-~
-<
->
-=
+};ç

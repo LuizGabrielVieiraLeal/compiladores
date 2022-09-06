@@ -90,6 +90,10 @@ class Lex
           index += 1
         end
         @tokens.push(Token.new(str, Patterns::INT[:TYPE])) if str =~ Patterns::INT[:REGEXP]
+      when Patterns::PUNCT[:REGEXP]
+        @tokens.push(Token.new(@text[index], Patterns::PUNCT[:TYPE]))
+      else
+        @tokens.push(Token.new(@text[index], 'UNDEFINED')) if @text[index] !~ /\s/
       end
       index += 1
     end

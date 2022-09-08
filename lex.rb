@@ -58,6 +58,9 @@ class Lex
           index += 1
         end
 
+        str.prepend("'", '')
+        str.concat("'", '') if text[index] =~ /'/
+
         if str =~ Patterns::CHAR[:REGEXP]
           @tokens.push(Token.new(str, Patterns::CHAR[:TYPE]))
         else
@@ -70,6 +73,9 @@ class Lex
           str << text[index]
           index += 1
         end
+
+        str.prepend('"', '')
+        str.concat('"', '') if text[index] =~ /"/
 
         if str =~ Patterns::STRING[:REGEXP]
           @tokens.push(Token.new(str, Patterns::STRING[:TYPE]))
@@ -106,7 +112,7 @@ class Lex
       else
         if text[index] !~ /\s/
           @tokens.push(Token.new(text[index], 'UNDEFINED'))
-          @errors.push("Unexpected token '#{text[index]}' at #{line_index}:#{index + 1}")
+          @errors.push("Unexpected token '#{text[index]}' at line #{line_index}:#{index + 1}")
         end
       end
 

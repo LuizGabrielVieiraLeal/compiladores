@@ -3,8 +3,8 @@ module Patterns
   SELF_REFERENCE = { TYPE: 'self_reference'.upcase, KEYS: %w[self SELF_TYPE] }.freeze
   OBJECT_ID = { TYPE: 'object_id'.upcase, REGEXP: /[_[A-Za-z]]\w*?/ }.freeze
   TYPE_ID = { TYPE: 'type_id'.upcase, REGEXP: /[A-Z]\w*?/ }.freeze
-  CHAR = { TYPE: 'char'.upcase, REGEXP: /./ }.freeze
-  STRING = { TYPE: 'string'.upcase, REGEXP: /.*?/ }.freeze
+  CHAR = { TYPE: 'char'.upcase, REGEXP: /'.?'/ }.freeze
+  STRING = { TYPE: 'string'.upcase, REGEXP: /".*?"/ }.freeze
   INT = { TYPE: 'int'.upcase, REGEXP: /\d+/ }.freeze
   BOOL = { TYPE: 'boolean'.upcase, KEYS: %w[false true] }.freeze
   OPERATORS = { TYPE: 'operator'.upcase, REGEXP: /[\+\-\*\/~><=]/ }.freeze

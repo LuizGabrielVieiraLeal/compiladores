@@ -2,16 +2,17 @@ require './lib/patterns'
 require './token'
 
 class Lex
-  attr_reader :tokens
+  attr_reader :tokens, :errors
 
   def initialize(filename)
     @tokens = []
     @tk_index = 0
     @lines = []
+    @errors = []
     @removing_block = false
 
     File.foreach(filename) do |line|
-      line_text = line.strip!
+      line_text = line
       @lines.push(line_text)
     end
 
@@ -52,22 +53,30 @@ class Lex
         end
       when /'/
         index += 1
-        while text[index] !~ /'/
+        while text[index] !~ /['[\s]]/
           str << text[index]
           index += 1
         end
-        str.prepend("'", '')
-        str.concat("'", '')
-        @tokens.push(Token.new(str, Patterns::CHAR[:TYPE])) if str =~ Patterns::CHAR[:REGEXP]
+
+        if str =~ Patterns::CHAR[:REGEXP]
+          @tokens.push(Token.new(str, Patterns::CHAR[:TYPE]))
+        else
+          @tokens.push(Token.new(text[index], 'UNDEFINED'))
+          @errors.push("Unexpected token '#{str}' at line: #{line_index}")
+        end
       when /"/
         index += 1
-        while text[index] !~ /"/
+        while text[index] !~ /["[\s]]/
           str << text[index]
           index += 1
         end
-        str.prepend('"', '')
-        str.concat('"', '')
-        @tokens.push(Token.new(str, Patterns::STRING[:TYPE])) if str =~ Patterns::STRING[:REGEXP]
+
+        if str =~ Patterns::STRING[:REGEXP]
+          @tokens.push(Token.new(str, Patterns::STRING[:TYPE]))
+        else
+          @tokens.push(Token.new(text[index], 'UNDEFINED'))
+          @errors.push("Unexpected token '#{str}' at line: #{line_index}")
+        end
       when /\d/
         while text[index] =~ /\d/
           str << text[index]
@@ -95,7 +104,10 @@ class Lex
       when Patterns::OPERATORS[:REGEXP]
         @tokens.push(Token.new(text[index], Patterns::OPERATORS[:TYPE]))
       else
-        @tokens.push(Token.new(text[index], 'UNDEFINED', "Unexpected token at #{line_index}:#{index + 1}")) if text[index] !~ /\s/
+        if text[index] !~ /\s/
+          @tokens.push(Token.new(text[index], 'UNDEFINED'))
+          @errors.push("Unexpected token '#{text[index]}' at #{line_index}:#{index + 1}")
+        end
       end
 
       index += 1

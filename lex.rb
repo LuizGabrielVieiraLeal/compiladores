@@ -53,7 +53,7 @@ class Lex
         end
       when /'/
         index += 1
-        while text[index] !~ /['[\s]]/
+        while text[index] !~ /['[\n]]/
           str << text[index]
           index += 1
         end
@@ -69,7 +69,7 @@ class Lex
         end
       when /"/
         index += 1
-        while text[index] !~ /["[\s]]/
+        while text[index] !~ /["[\n]]/
           str << text[index]
           index += 1
         end

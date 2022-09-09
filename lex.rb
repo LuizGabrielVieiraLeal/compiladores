@@ -11,14 +11,8 @@ class Lex
     @errors = []
     @removing_block = false
 
-    File.foreach(filename) do |line|
-      line_text = line
-      @lines.push(line_text)
-    end
-
-    @lines.each_with_index do |text, index|
-      sort_tokens(text, index + 1)
-    end
+    File.foreach(filename) { |line| @lines.push(line) }
+    @lines.each_with_index { |text, index| sort_tokens(text, index + 1) }
   end
 
   def next_token
@@ -65,7 +59,7 @@ class Lex
           @tokens.push(Token.new(str, Patterns::CHAR[:TYPE]))
         else
           @tokens.push(Token.new(text[index], 'UNDEFINED'))
-          @errors.push("Unexpected token '#{str}' at line: #{line_index}")
+          @errors.push("Expected token ' at line: #{line_index}")
         end
       when /"/
         index += 1
@@ -81,7 +75,7 @@ class Lex
           @tokens.push(Token.new(str, Patterns::STRING[:TYPE]))
         else
           @tokens.push(Token.new(text[index], 'UNDEFINED'))
-          @errors.push("Unexpected token '#{str}' at line: #{line_index}")
+          @errors.push("Expected token \" at line: #{line_index}")
         end
       when /\d/
         while text[index] =~ /\d/

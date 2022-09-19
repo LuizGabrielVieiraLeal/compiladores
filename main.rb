@@ -1,8 +1,6 @@
-require 'colorize'
-require './lex'
+require './sin'
 
 ARGV.each do |filename|
-  lex = Lex.new(filename)
-  lex.tokens.each { |token| puts token.inspect }
-  lex.errors.each { |error| puts error.red }
+  sin = Sin.new(filename)
+  sin.top_down_analyze
 end

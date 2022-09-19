@@ -17,7 +17,7 @@ class Lex
 
   def next_token
     @tk_index += 1
-    @tokens[@tk_index - 1]
+    @tokens[@tk_index - 1] ? @tokens[@tk_index - 1] : nil
   end
 
   private
@@ -44,6 +44,9 @@ class Lex
           @tokens.push(Token.new(str, Patterns::TYPE_ID[:TYPE]))
         elsif str =~ Patterns::OBJECT_ID[:REGEXP]
           @tokens.push(Token.new(str, Patterns::OBJECT_ID[:TYPE]))
+        else
+          @tokens.push(Token.new(text[index], 'UNDEFINED'))
+          @errors.push("Unexpected token '#{str}' at line #{line_index}:#{index + 1} in #{filename}")
         end
       when /'/
         index += 1

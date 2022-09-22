@@ -29,10 +29,12 @@ class Lex
 
       case text[index]
       when /[_[A-Za-z]]/
-        while text[index] =~ /[_[A-Za-z]]/
+        while text[index + 1] =~ /[_[A-Za-z]]/
           str << text[index]
           index += 1
         end
+
+        str << text[index] if text[index] =~ /[a-z]/
 
         if Patterns::KEYWORDS[:KEYS].include?(str.downcase)
           @tokens.push(Token.new(str, Patterns::KEYWORDS[:TYPE]))
@@ -88,7 +90,7 @@ class Lex
         @tokens.push(Token.new(str, Patterns::INT[:TYPE])) if str =~ Patterns::INT[:REGEXP]
       when Patterns::PUNCT[:REGEXP]
         @tokens.push(Token.new(text[index], Patterns::PUNCT[:TYPE]))
-      when /[\(\)\{\}]/
+      when /[(){}]/
         @tokens.push(Token.new(text[index], Patterns::OPEN_EXP[:TYPE])) if text[index] =~ Patterns::OPEN_EXP[:REGEXP]
         @tokens.push(Token.new(text[index], Patterns::CLOSE_EXP[:TYPE])) if text[index] =~ Patterns::CLOSE_EXP[:REGEXP]
         @tokens.push(Token.new(text[index], Patterns::OPEN_SCOPE[:TYPE])) if text[index] =~ Patterns::OPEN_SCOPE[:REGEXP]

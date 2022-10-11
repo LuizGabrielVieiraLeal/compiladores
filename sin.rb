@@ -219,6 +219,7 @@ class Sin
           @errors.push("Unexpected token #{@current_token.value} in file #{@filename}")
         end
       when 'if'
+        next_token
         expr_validate
         if @current_token.type == Patterns::KEYWORDS[:TYPE] && @current_token.value.downcase == 'then'
           next_token

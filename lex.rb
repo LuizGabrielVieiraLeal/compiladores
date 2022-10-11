@@ -20,6 +20,10 @@ class Lex
     @tokens[@tk_index - 1] ? @tokens[@tk_index - 1] : nil
   end
 
+  def prev_token
+    @tokens[@tk_index - 2]
+  end
+
   private
 
   def sort_tokens(text, line_index, filename)
